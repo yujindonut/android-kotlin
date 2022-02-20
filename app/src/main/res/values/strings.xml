@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Week6_7_Game</string>
+    <string name="button_start">시작</string>
+    <string name="button_end">다시 시작</string>
+</resources>
