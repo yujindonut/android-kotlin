@@ -2,4 +2,8 @@
     <string name="app_name">Week6_7_Game</string>
     <string name="button_start">시작</string>
     <string name="button_end">다시 시작</string>
+    <string name="button_saveRecord">내 기록 저장</string>
+    <string name="rank_title">역대 기록</string>
+    <string name="rank_dialog">내 점수 기록</string>
+    <string name="rank_et_name">이름을 기록해주세요</string>
 </resources>

@@ -1,6 +1,7 @@
 package work.risingcamp.week6_7_game
 
 import android.content.Intent
+import android.media.SoundPool
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -12,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import work.risingcamp.week6_7_game.databinding.ActivityGameBinding
@@ -54,7 +56,8 @@ class GameActivity : AppCompatActivity() {
 
     var xValue: Float = 0.0f
     var yValue: Float = 0.0f
-
+    val soundPool = SoundPool.Builder().build()
+    var soundId : Int = 0
     var handler: Handler? = null
     var sc = 0
     var tag2 = 0
@@ -66,6 +69,11 @@ class GameActivity : AppCompatActivity() {
 
         handler = Handler(Looper.getMainLooper())
 
+        soundId = soundPool.load(this,R.raw.meatsound,1)
+
+//        private fun playSound(){
+//            soundPool.play(soundId,1.0f,1.0f,0,0,1.0f)
+//        }
         val meat1 : ImageView = binding.meat1
         meat1.tag = 1
         meat1.setOnTouchListener { v, event ->
@@ -162,7 +170,6 @@ class GameActivity : AppCompatActivity() {
                                     binding.meat1.setImageResource(R.drawable.blackmeat1)
                                     tag2 = resourceId
                                 }
-
                             }
                         }
                     }
@@ -271,7 +278,9 @@ class GameActivity : AppCompatActivity() {
                                     binding.meat2.setImageResource(R.drawable.blackmeat2)
                                     tag2 = resourceId
                                 }
-
+//                                if ((binding.fireFrame.x < xValue && xValue < binding.fireFrame.x + binding.fireFrame.width) && binding.fireFrame.y < yValue && yValue < binding.fireFrame.y + binding.fireFrame.height) {
+//                                    setSmoke(xValue,yValue)
+//                                }
                             }
                         }
                     }
@@ -290,9 +299,8 @@ class GameActivity : AppCompatActivity() {
 //            부모 view의 width, height
             val width = (v.parent as ViewGroup).width - v.width
             val height = (v.parent as ViewGroup).height - v.width
-//            Log.d("COUNT", count1.toString())
-            when (event.action) {
 
+            when (event.action) {
 //                처음 눌렀을때
                 MotionEvent.ACTION_DOWN -> {
 //                    터치한 지점의 상대좌표값
@@ -380,7 +388,6 @@ class GameActivity : AppCompatActivity() {
                                     binding.meat3.setImageResource(R.drawable.blackmeat3)
                                     tag2 = resourceId
                                 }
-
                             }
                         }
                     }
@@ -489,7 +496,6 @@ class GameActivity : AppCompatActivity() {
                                     binding.meat4.setImageResource(R.drawable.blackmeat1)
                                     tag2 = resourceId
                                 }
-
                             }
                         }
                     }
@@ -598,7 +604,6 @@ class GameActivity : AppCompatActivity() {
                                     binding.meat5.setImageResource(R.drawable.blackmeat2)
                                     tag2 = resourceId
                                 }
-
                             }
                         }
                     }
@@ -707,7 +712,9 @@ class GameActivity : AppCompatActivity() {
                                     binding.meat6.setImageResource(R.drawable.blackmeat3)
                                     tag2 = resourceId
                                 }
-
+                                if ((binding.fireFrame.x < xValue && xValue < binding.fireFrame.x + binding.fireFrame.width) && binding.fireFrame.y < yValue && yValue < binding.fireFrame.y + binding.fireFrame.height) {
+                                    setSmoke(xValue,yValue)
+                                }
                             }
                         }
                     }
@@ -816,7 +823,6 @@ class GameActivity : AppCompatActivity() {
                                     binding.meat7.setImageResource(R.drawable.blackmeat1)
                                     tag2 = resourceId
                                 }
-
                             }
                         }
                     }
@@ -925,8 +931,8 @@ class GameActivity : AppCompatActivity() {
                                     binding.meat8.setImageResource(R.drawable.blackmeat2)
                                     tag2 = resourceId
                                 }
-
                             }
+
                         }
                     }
                     flag8 = true
@@ -940,14 +946,32 @@ class GameActivity : AppCompatActivity() {
         }
         timerTask()
     }
+    private fun checkSum(score : Int){
+        if (score >= 2000) {
+            val intent = Intent(this, LastActivity::class.java)
+            intent.putExtra("result", "고기굽기 장인!!")
+            intent.putExtra("score",score)
+            startActivity(intent)
+            overridePendingTransition(R.anim.slide_up_enter, R.anim.slide_up_exit)
+            finish()
+        }
+    }
+    private fun setSmoke(x : Float, y:Float){
+        val iv = binding.smokeAnimation
 
+        iv.translationX = x - iv.width + 350
+        iv.translationY = y - iv.height + 200
+        iv.visibility = View.VISIBLE
+        iv.speed = 5F
+        iv.repeatCount = 1
+    }
     private fun FireMeat1(x: Float, y: Float, tag: Int, v: ImageView) {
         val resourceId =
             resources.getIdentifier("goodmeat$tag", "drawable", "work.risingcamp.week6_7_game")
-//        Log.d("flag", flag1.toString())
         //고기가 어디가있는지에 따라서, frame에 가있으면 초 세는 thread
         if ((binding.fireFrame.x < x && x < binding.fireFrame.x + binding.fireFrame.width) && binding.fireFrame.y < y && y < binding.fireFrame.y + binding.fireFrame.height) {
-//            Log.d("frame에 들어왔음", "true")
+            setSmoke(x,y)
+            soundPool.play(soundId,1.0f,1.0f,0,0,1.0f)
             plusTr1 = Thread {
                 while (flag1!!) {
                     try {
@@ -961,20 +985,13 @@ class GameActivity : AppCompatActivity() {
                 }
             }
             plusTr1!!.start()
-
 //            고기가 양념장에 가있으면 점수 측정 + 고기 사라지게 하기
         } else if (binding.endFrame.x < x && x < binding.endFrame.x + binding.endFrame.width && binding.endFrame.y < y && y < binding.endFrame.y + binding.endFrame.height) {
-//            Log.d("양념장","true")
             v.visibility = View.GONE
             if (tag2 == resourceId) {
                 sc += 500
                 binding.score.text = "SCORE:$sc"
-                if (sc >= 2000) {
-                    val intent = Intent(this, LastActivity::class.java)
-                    intent.putExtra("result", "성공적인 고기장수")
-                    startActivity(intent)
-                    finish()
-                }
+                checkSum(sc)
             } else {
             }
         }
@@ -985,7 +1002,8 @@ class GameActivity : AppCompatActivity() {
 //        Log.d("flag", flag1.toString())
         //고기가 어디가있는지에 따라서, frame에 가있으면 초 세는 thread
         if ((binding.fireFrame.x < x && x < binding.fireFrame.x + binding.fireFrame.width) && binding.fireFrame.y < y && y < binding.fireFrame.y + binding.fireFrame.height) {
-//            Log.d("frame에 들어왔음", "true")
+            setSmoke(x,y)
+            soundPool.play(soundId,1.0f,1.0f,0,0,1.0f)
             plusTr2 = Thread {
                 while (flag2!!) {
                     try {
@@ -1007,12 +1025,7 @@ class GameActivity : AppCompatActivity() {
             if (tag2 == resourceId) {
                 sc += 500
                 binding.score.text = "SCORE:$sc"
-                if (sc >= 2000) {
-                    val intent = Intent(this, LastActivity::class.java)
-                    intent.putExtra("result", "성공적인 고기장수")
-                    startActivity(intent)
-                    finish()
-                }
+                checkSum(sc)
             } else {
             }
         }
@@ -1020,10 +1033,10 @@ class GameActivity : AppCompatActivity() {
     private fun FireMeat3(x: Float, y: Float, tag: Int, v: ImageView) {
         val resourceId =
             resources.getIdentifier("goodmeat$tag", "drawable", "work.risingcamp.week6_7_game")
-//        Log.d("flag", flag1.toString())
         //고기가 어디가있는지에 따라서, frame에 가있으면 초 세는 thread
         if ((binding.fireFrame.x < x && x < binding.fireFrame.x + binding.fireFrame.width) && binding.fireFrame.y < y && y < binding.fireFrame.y + binding.fireFrame.height) {
-//            Log.d("frame에 들어왔음", "true")
+            setSmoke(x,y)
+            soundPool.play(soundId,1.0f,1.0f,0,0,1.0f)
             plusTr3 = Thread {
                 while (flag3!!) {
                     try {
@@ -1045,12 +1058,7 @@ class GameActivity : AppCompatActivity() {
             if (tag2 == resourceId) {
                 sc += 500
                 binding.score.text = "SCORE:$sc"
-                if (sc >= 2000) {
-                    val intent = Intent(this, LastActivity::class.java)
-                    intent.putExtra("result", "성공적인 고기장수")
-                    startActivity(intent)
-                    finish()
-                }
+                checkSum(sc)
             } else {
             }
         }
@@ -1061,10 +1069,12 @@ class GameActivity : AppCompatActivity() {
 //        Log.d("flag", flag1.toString())
         //고기가 어디가있는지에 따라서, frame에 가있으면 초 세는 thread
         if ((binding.fireFrame.x < x && x < binding.fireFrame.x + binding.fireFrame.width) && binding.fireFrame.y < y && y < binding.fireFrame.y + binding.fireFrame.height) {
-//            Log.d("frame에 들어왔음", "true")
+            setSmoke(x,y)
+            soundPool.play(soundId,1.0f,1.0f,0,0,1.0f)
             plusTr4 = Thread {
                 while (flag4!!) {
                     try {
+//                        setSmoke(x,y)
                         var past = System.currentTimeMillis()/1000
                         Thread.sleep(1000)
                         var now = System.currentTimeMillis()/1000
@@ -1083,12 +1093,7 @@ class GameActivity : AppCompatActivity() {
             if (tag2 == resourceId) {
                 sc += 500
                 binding.score.text = "SCORE:$sc"
-                if (sc >= 2000) {
-                    val intent = Intent(this, LastActivity::class.java)
-                    intent.putExtra("result", "성공적인 고기장수")
-                    startActivity(intent)
-                    finish()
-                }
+                checkSum(sc)
             } else {
             }
         }
@@ -1099,10 +1104,12 @@ class GameActivity : AppCompatActivity() {
 //        Log.d("flag", flag1.toString())
         //고기가 어디가있는지에 따라서, frame에 가있으면 초 세는 thread
         if ((binding.fireFrame.x < x && x < binding.fireFrame.x + binding.fireFrame.width) && binding.fireFrame.y < y && y < binding.fireFrame.y + binding.fireFrame.height) {
-//            Log.d("frame에 들어왔음", "true")
+            setSmoke(x,y)
+            soundPool.play(soundId,1.0f,1.0f,0,0,1.0f)
             plusTr5 = Thread {
                 while (flag5!!) {
                     try {
+//                        setSmoke(x,y)
                         var past = System.currentTimeMillis()/1000
                         Thread.sleep(1000)
                         var now = System.currentTimeMillis()/1000
@@ -1121,12 +1128,7 @@ class GameActivity : AppCompatActivity() {
             if (tag2 == resourceId) {
                 sc += 500
                 binding.score.text = "SCORE:$sc"
-                if (sc >= 2000) {
-                    val intent = Intent(this, LastActivity::class.java)
-                    intent.putExtra("result", "성공적인 고기장수")
-                    startActivity(intent)
-                    finish()
-                }
+                checkSum(sc)
             } else {
             }
         }
@@ -1134,10 +1136,10 @@ class GameActivity : AppCompatActivity() {
     private fun FireMeat6(x: Float, y: Float, tag: Int, v: ImageView) {
         val resourceId =
             resources.getIdentifier("goodmeat$tag", "drawable", "work.risingcamp.week6_7_game")
-//        Log.d("flag", flag1.toString())
         //고기가 어디가있는지에 따라서, frame에 가있으면 초 세는 thread
         if ((binding.fireFrame.x < x && x < binding.fireFrame.x + binding.fireFrame.width) && binding.fireFrame.y < y && y < binding.fireFrame.y + binding.fireFrame.height) {
-//            Log.d("frame에 들어왔음", "true")
+            setSmoke(x,y)
+            soundPool.play(soundId,1.0f,1.0f,0,0,1.0f)
             plusTr6 = Thread {
                 while (flag6!!) {
                     try {
@@ -1159,12 +1161,7 @@ class GameActivity : AppCompatActivity() {
             if (tag2 == resourceId) {
                 sc += 500
                 binding.score.text = "SCORE:$sc"
-                if (sc >= 2000) {
-                    val intent = Intent(this, LastActivity::class.java)
-                    intent.putExtra("result", "성공적인 고기장수")
-                    startActivity(intent)
-                    finish()
-                }
+                checkSum(sc)
             } else {
             }
         }
@@ -1172,10 +1169,10 @@ class GameActivity : AppCompatActivity() {
     private fun FireMeat7(x: Float, y: Float, tag: Int, v: ImageView) {
         val resourceId =
             resources.getIdentifier("goodmeat$tag", "drawable", "work.risingcamp.week6_7_game")
-//        Log.d("flag", flag1.toString())
         //고기가 어디가있는지에 따라서, frame에 가있으면 초 세는 thread
         if ((binding.fireFrame.x < x && x < binding.fireFrame.x + binding.fireFrame.width) && binding.fireFrame.y < y && y < binding.fireFrame.y + binding.fireFrame.height) {
-//            Log.d("frame에 들어왔음", "true")
+            setSmoke(x,y)
+            soundPool.play(soundId,1.0f,1.0f,0,0,1.0f)
             plusTr7 = Thread {
                 while (flag7!!) {
                     try {
@@ -1192,17 +1189,11 @@ class GameActivity : AppCompatActivity() {
 
 //            고기가 양념장에 가있으면 점수 측정 + 고기 사라지게 하기
         } else if (binding.endFrame.x < x && x < binding.endFrame.x + binding.endFrame.width && binding.endFrame.y < y && y < binding.endFrame.y + binding.endFrame.height) {
-//            Log.d("양념장","true")
             v.visibility = View.GONE
             if (tag2 == resourceId) {
                 sc += 500
                 binding.score.text = "SCORE:$sc"
-                if (sc >= 2000) {
-                    val intent = Intent(this, LastActivity::class.java)
-                    intent.putExtra("result", "성공적인 고기장수")
-                    startActivity(intent)
-                    finish()
-                }
+                checkSum(sc)
             } else {
             }
         }
@@ -1210,10 +1201,10 @@ class GameActivity : AppCompatActivity() {
     private fun FireMeat8(x: Float, y: Float, tag: Int, v: ImageView) {
         val resourceId =
             resources.getIdentifier("goodmeat$tag", "drawable", "work.risingcamp.week6_7_game")
-//        Log.d("flag", flag1.toString())
         //고기가 어디가있는지에 따라서, frame에 가있으면 초 세는 thread
         if ((binding.fireFrame.x < x && x < binding.fireFrame.x + binding.fireFrame.width) && binding.fireFrame.y < y && y < binding.fireFrame.y + binding.fireFrame.height) {
-//            Log.d("frame에 들어왔음", "true")
+            setSmoke(x,y)
+            soundPool.play(soundId,1.0f,1.0f,0,0,1.0f)
             plusTr8 = Thread {
                 while (flag8!!) {
                     try {
@@ -1227,7 +1218,6 @@ class GameActivity : AppCompatActivity() {
                 }
             }
             plusTr8!!.start()
-
 //            고기가 양념장에 가있으면 점수 측정 + 고기 사라지게 하기
         } else if (binding.endFrame.x < x && x < binding.endFrame.x + binding.endFrame.width && binding.endFrame.y < y && y < binding.endFrame.y + binding.endFrame.height) {
 //            Log.d("양념장","true")
@@ -1235,12 +1225,7 @@ class GameActivity : AppCompatActivity() {
             if (tag2 == resourceId) {
                 sc += 500
                 binding.score.text = "SCORE:$sc"
-                if (sc >= 2000) {
-                    val intent = Intent(this, LastActivity::class.java)
-                    intent.putExtra("result", "성공적인 고기장수")
-                    startActivity(intent)
-                    finish()
-                }
+                checkSum(sc)
             } else {
             }
         }
@@ -1257,11 +1242,8 @@ class GameActivity : AppCompatActivity() {
                         timer.cancel()
                         val intent = Intent(applicationContext, LastActivity::class.java)
                         intent.putExtra("result","TimeOut!!!!")
+                        intent.putExtra("score",sc)
                         startActivity(intent)
-                        val sharedPreferences = getSharedPreferences("TimeOut", MODE_PRIVATE)
-                        val editor = sharedPreferences.edit()
-                        editor.putString("score",sc.toString())
-                        editor.apply()
                         finish()
                     }
                 })
@@ -1275,10 +1257,6 @@ class GameActivity : AppCompatActivity() {
         super.onPause()
 
         timerTask?.cancel()
-        val sharedPreferences = getSharedPreferences("GiveUP", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("score",sc.toString())
-        editor.apply()
 
         val customDialogView = LayoutInflater.from(this).inflate(R.layout.activity_dialog, null)
         val builder = AlertDialog.Builder(this)
@@ -1290,6 +1268,7 @@ class GameActivity : AppCompatActivity() {
         exitButton.setOnClickListener {
             val intent = Intent(this, LastActivity::class.java)
             intent.putExtra("result", "포기!")
+            intent.putExtra("score",sc)
             startActivity(intent)
             finish()
         }

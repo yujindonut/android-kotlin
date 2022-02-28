@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
         binding.btnGamestart.setOnClickListener {
             val intent = Intent(this, GameActivity::class.java)
             startActivity(intent)
+            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
         }
     }
 }
