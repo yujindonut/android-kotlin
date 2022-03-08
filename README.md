@@ -1,12 +1,12 @@
-# IOS_MEMO
+### IOS_MEMO
 
-# 개발 목적
+### 개발 목적
 List view를 이용해 memo(apple)앱 만들어보기
 
-# 개발 기간
+### 개발 기간
 2-3일 
 
-# 아쉬웠던 점
+### 아쉬웠던 점
 - 👹 Recycler view를 이용해서, toggle의 상태가 저장되고, 다시 돌아와도 toggle의 상태가 유지되는 것을 시도했는데, 이상하게 안되었다! checkbox만 되었다 --> 다시 listview로 구현했음
 - 👹 좀 더 정확한 UI
 - 👹 recycler view를 사용해보기!
