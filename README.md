@@ -1,4 +1,4 @@
-### IOS_MEMO
+## IOS_MEMO
 
 ### 개발 목적
 List view를 이용해 memo(apple)앱 만들어보기
