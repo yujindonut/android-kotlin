@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item>
+        <bitmap
+            app:tint="#80000000"
+            android:tintMode="src_atop"
+            android:gravity="center|bottom|clip_vertical"
+            android:src="@drawable/background_image" />
+    </item>
+</selector>
